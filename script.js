@@ -1,3 +1,165 @@
+// Qurilma turini aniqlash
+function detectDeviceType() {
+    const deviceText = document.getElementById('deviceText');
+    const deviceIcon = document.querySelector('.device-icon');
+    
+    if (!deviceText || !deviceIcon) return;
+    
+    const userAgent = navigator.userAgent;
+    let deviceType = '';
+    let icon = '📱';
+    
+    // Qurilma turini aniqlash
+    if (/Android/i.test(userAgent)) {
+        deviceType = 'Android';
+        icon = '🤖';
+    } else if (/iPhone|iPad|iPod/i.test(userAgent)) {
+        deviceType = /iPad/i.test(userAgent) ? 'iPad' : 'iPhone';
+        icon = '📱';
+    } else if (/Windows/i.test(userAgent)) {
+        deviceType = /Windows Phone/i.test(userAgent) ? 'WinPhone' : 'Windows';
+        icon = '💻';
+    } else if (/Macintosh/i.test(userAgent)) {
+        deviceType = 'Mac';
+        icon = '💻';
+    } else if (/Linux/i.test(userAgent)) {
+        deviceType = 'Linux';
+        icon = '💻';
+    } else {
+        deviceType = 'Desktop';
+        icon = '💻';
+    }
+    
+    // Web yoki Mobile ekanligini aniqlash
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+    
+    if (isMobile) {
+        if (!deviceType.includes('Phone') && !deviceType.includes('Android') && !deviceType.includes('iPhone')) {
+            deviceType += ' Mobile';
+        }
+    }
+    
+    // Ekran o'lchamiga qarab qo'shimcha ma'lumot
+    const screenWidth = window.innerWidth;
+    if (screenWidth < 768) {
+        if (!isMobile) {
+            deviceType += ' Tablet';
+        }
+    }
+    
+    deviceText.textContent = deviceType;
+    deviceIcon.textContent = icon;
+    
+    // Qurilma turiga qarab body class qo'shish
+    if (isMobile) {
+        document.body.classList.add('mobile-device');
+        if (isIOS) {
+            document.body.classList.add('ios-device');
+        } else {
+            document.body.classList.add('android-device');
+        }
+    } else {
+        document.body.classList.add('desktop-device');
+    }
+    
+    // Safe area uchun padding o'rnatish
+    setupSafeArea();
+}
+
+// Safe area uchun sozlash
+function setupSafeArea() {
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+    if (isIOS) {
+        // iOS uchun safe area
+        const header = document.querySelector('.glass-header');
+        const footer = document.querySelector('.glass-footer');
+        
+        if (header) {
+            header.style.paddingTop = 'calc(16px + env(safe-area-inset-top))';
+        }
+        
+        if (footer) {
+            footer.style.paddingBottom = 'env(safe-area-inset-bottom)';
+        }
+    }
+}
+
+// Scrollni bloklash va frame'ni sozlash
+function setupFrameScrolling() {
+    // Asosiy body scrollini to'xtatish
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    // Mobile frame ichidagi scrollni yoqish
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.style.overflowY = 'auto';
+        mainContent.style.webkitOverflowScrolling = 'touch';
+    }
+    
+    // Touch eventlarini boshqarish
+    let startY = 0;
+    let isScrolling = false;
+    
+    document.addEventListener('touchstart', function(e) {
+        const mainContent = document.querySelector('.main-content');
+        const touchInContent = mainContent && mainContent.contains(e.target);
+        
+        if (!touchInContent) {
+            // Frame tashqarisida touch bosilsa, scrollni bloklash
+            e.preventDefault();
+        }
+        
+        startY = e.touches[0].clientY;
+        isScrolling = false;
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', function(e) {
+        const mainContent = document.querySelector('.main-content');
+        const touchInContent = mainContent && mainContent.contains(e.target);
+        
+        if (!touchInContent) {
+            // Frame tashqarisida harakatlansa, scrollni to'xtatish
+            e.preventDefault();
+            return;
+        }
+        
+        // Frame ichida scroll qilish
+        const currentY = e.touches[0].clientY;
+        const deltaY = currentY - startY;
+        
+        // Agar scroll pastga borayotgan bo'lsa va content yuqorida bo'lsa
+        const isAtTop = mainContent.scrollTop === 0;
+        const isAtBottom = mainContent.scrollHeight - mainContent.scrollTop === mainContent.clientHeight;
+        
+        if ((isAtTop && deltaY > 0) || (isAtBottom && deltaY < 0)) {
+            // Chegaralarda scrollni bloklash
+            e.preventDefault();
+        }
+        
+        isScrolling = true;
+    }, { passive: false });
+    
+    document.addEventListener('touchend', function(e) {
+        isScrolling = false;
+    });
+    
+    // Double tap to zoom ni oldini olish
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    });
+    
+    document.addEventListener('gesturechange', function(e) {
+        e.preventDefault();
+    });
+    
+    document.addEventListener('gestureend', function(e) {
+        e.preventDefault();
+    });
+}
+
 // Telegram WebApp ni ishga tushirish
 function initTelegramWebApp() {
     try {
@@ -27,6 +189,12 @@ function initTelegramWebApp() {
             // WebApp tayyor ekanligini bildirish
             tg.ready();
             
+            // Telegram WebApp bo'lsa, frame'ni to'liq ekran qilish
+            document.body.style.background = '#111111';
+            document.querySelector('.mobile-frame').style.borderRadius = '0';
+            document.querySelector('.mobile-frame').style.maxWidth = '100%';
+            document.querySelector('.mobile-frame').style.maxHeight = '100%';
+            
         } else {
             console.log('Telegram WebApp API topilmadi');
             updateUserName({
@@ -53,52 +221,15 @@ function updateUserName(user) {
     }
 }
 
-// Qurilma turini aniqlash
-function detectDeviceType() {
-    const deviceText = document.getElementById('deviceText');
-    const deviceIcon = document.querySelector('.device-icon');
-    
-    if (!deviceText || !deviceIcon) return;
-    
-    const userAgent = navigator.userAgent;
-    let deviceType = '';
-    let icon = '📱';
-    
-    if (/Android/i.test(userAgent)) {
-        deviceType = 'Android';
-        icon = '🤖';
-    } else if (/iPhone|iPad|iPod/i.test(userAgent)) {
-        deviceType = /iPad/i.test(userAgent) ? 'iPad' : 'iPhone';
-        icon = '📱';
-    } else if (/Windows/i.test(userAgent)) {
-        deviceType = /Windows Phone/i.test(userAgent) ? 'WinPhone' : 'Windows';
-        icon = '💻';
-    } else if (/Macintosh/i.test(userAgent)) {
-        deviceType = 'Mac';
-        icon = '💻';
-    } else if (/Linux/i.test(userAgent)) {
-        deviceType = 'Linux';
-        icon = '💻';
-    } else {
-        deviceType = 'Noma\'lum';
-        icon = '❓';
-    }
-    
-    // Ekran o'lchamiga qarab qo'shimcha ma'lumot
-    const screenWidth = window.innerWidth;
-    if (screenWidth < 768 && !deviceType.includes('Phone') && !deviceType.includes('Android') && !deviceType.includes('iPhone')) {
-        deviceType += ' Mobil';
-    } else if (screenWidth >= 1200) {
-        deviceType += ' Desktop';
-    }
-    
-    deviceText.textContent = deviceType;
-    deviceIcon.textContent = icon;
-}
-
 // DOM Ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('InfoBox Demo Initialized');
+    
+    // Qurilma turini aniqlash
+    detectDeviceType();
+    
+    // Frame scroll sozlamalari
+    setupFrameScrolling();
     
     // Initialize the app
     initApp();
@@ -238,6 +369,39 @@ function setupEventListeners() {
     airdropButton.addEventListener('touchend', function() {
         this.style.transform = '';
     });
+    
+    // Resize event
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+}
+
+// Handle resize and orientation change
+function handleResize() {
+    // Qurilma turini yangilash
+    detectDeviceType();
+    
+    // Frame o'lchamini yangilash
+    const mobileFrame = document.querySelector('.mobile-frame');
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // Mobile qurilmalarda
+        mobileFrame.style.width = '100%';
+        mobileFrame.style.height = '100%';
+        mobileFrame.style.borderRadius = '0';
+        mobileFrame.style.maxWidth = '100%';
+        mobileFrame.style.maxHeight = '100%';
+    } else {
+        // Desktop qurilmalarda
+        mobileFrame.style.width = '100%';
+        mobileFrame.style.maxWidth = '430px';
+        mobileFrame.style.height = '90vh';
+        mobileFrame.style.maxHeight = '932px';
+        mobileFrame.style.borderRadius = '30px';
+        mobileFrame.style.margin = 'auto';
+    }
+    
+    console.log('Window resized:', window.innerWidth, 'x', window.innerHeight, 'orientation:', window.orientation);
 }
 
 // Initialize Animations
@@ -561,14 +725,6 @@ function updateContent(section) {
         setupEventListeners();
     }, 100);
 }
-
-// Handle Window Resize
-window.addEventListener('resize', function() {
-    // Update any responsive elements if needed
-    console.log('Window resized:', window.innerWidth, 'x', window.innerHeight);
-    // Qurilma turini qayta aniqlash
-    detectDeviceType();
-});
 
 // Add CSS for particles
 const particleStyles = document.createElement('style');
