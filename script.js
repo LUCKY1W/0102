@@ -40,12 +40,11 @@ function detectDeviceType() {
         }
     }
     
-    // Ekran o'lchamiga qarab qo'shimcha ma'lumot
-    const screenWidth = window.innerWidth;
-    if (screenWidth < 768) {
-        if (!isMobile) {
-            deviceType += ' Tablet';
-        }
+    // Touch device ekanligini aniqlash
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    if (isTouchDevice) {
+        console.log('Touch device detected');
     }
     
     deviceText.textContent = deviceType;
@@ -56,15 +55,25 @@ function detectDeviceType() {
         document.body.classList.add('mobile-device');
         if (isIOS) {
             document.body.classList.add('ios-device');
+            console.log('iOS device detected');
         } else {
             document.body.classList.add('android-device');
+            console.log('Android device detected');
         }
     } else {
         document.body.classList.add('desktop-device');
+        console.log('Desktop device detected');
     }
     
     // Safe area uchun padding o'rnatish
     setupSafeArea();
+}
+
+// Touch device aniqlash
+function isTouchDevice() {
+    return 'ontouchstart' in window || 
+           navigator.maxTouchPoints > 0 || 
+           navigator.msMaxTouchPoints > 0;
 }
 
 // Safe area uchun sozlash
@@ -84,80 +93,6 @@ function setupSafeArea() {
             footer.style.paddingBottom = 'env(safe-area-inset-bottom)';
         }
     }
-}
-
-// Scrollni bloklash va frame'ni sozlash
-function setupFrameScrolling() {
-    // Asosiy body scrollini to'xtatish
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    
-    // Mobile frame ichidagi scrollni yoqish
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.style.overflowY = 'auto';
-        mainContent.style.webkitOverflowScrolling = 'touch';
-    }
-    
-    // Touch eventlarini boshqarish
-    let startY = 0;
-    let isScrolling = false;
-    
-    document.addEventListener('touchstart', function(e) {
-        const mainContent = document.querySelector('.main-content');
-        const touchInContent = mainContent && mainContent.contains(e.target);
-        
-        if (!touchInContent) {
-            // Frame tashqarisida touch bosilsa, scrollni bloklash
-            e.preventDefault();
-        }
-        
-        startY = e.touches[0].clientY;
-        isScrolling = false;
-    }, { passive: false });
-    
-    document.addEventListener('touchmove', function(e) {
-        const mainContent = document.querySelector('.main-content');
-        const touchInContent = mainContent && mainContent.contains(e.target);
-        
-        if (!touchInContent) {
-            // Frame tashqarisida harakatlansa, scrollni to'xtatish
-            e.preventDefault();
-            return;
-        }
-        
-        // Frame ichida scroll qilish
-        const currentY = e.touches[0].clientY;
-        const deltaY = currentY - startY;
-        
-        // Agar scroll pastga borayotgan bo'lsa va content yuqorida bo'lsa
-        const isAtTop = mainContent.scrollTop === 0;
-        const isAtBottom = mainContent.scrollHeight - mainContent.scrollTop === mainContent.clientHeight;
-        
-        if ((isAtTop && deltaY > 0) || (isAtBottom && deltaY < 0)) {
-            // Chegaralarda scrollni bloklash
-            e.preventDefault();
-        }
-        
-        isScrolling = true;
-    }, { passive: false });
-    
-    document.addEventListener('touchend', function(e) {
-        isScrolling = false;
-    });
-    
-    // Double tap to zoom ni oldini olish
-    document.addEventListener('gesturestart', function(e) {
-        e.preventDefault();
-    });
-    
-    document.addEventListener('gesturechange', function(e) {
-        e.preventDefault();
-    });
-    
-    document.addEventListener('gestureend', function(e) {
-        e.preventDefault();
-    });
 }
 
 // Telegram WebApp ni ishga tushirish
@@ -191,9 +126,12 @@ function initTelegramWebApp() {
             
             // Telegram WebApp bo'lsa, frame'ni to'liq ekran qilish
             document.body.style.background = '#111111';
-            document.querySelector('.mobile-frame').style.borderRadius = '0';
-            document.querySelector('.mobile-frame').style.maxWidth = '100%';
-            document.querySelector('.mobile-frame').style.maxHeight = '100%';
+            const mobileFrame = document.querySelector('.mobile-frame');
+            if (mobileFrame) {
+                mobileFrame.style.borderRadius = '0';
+                mobileFrame.style.maxWidth = '100%';
+                mobileFrame.style.maxHeight = '100%';
+            }
             
         } else {
             console.log('Telegram WebApp API topilmadi');
@@ -228,9 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Qurilma turini aniqlash
     detectDeviceType();
     
-    // Frame scroll sozlamalari
-    setupFrameScrolling();
-    
     // Initialize the app
     initApp();
     
@@ -246,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize App
 function initApp() {
-    // Create assets directory if needed
     console.log('Creating assets directory structure...');
     
     // Add some initial particles for visual effect
@@ -255,17 +189,26 @@ function initApp() {
     }, 1000);
 }
 
-// Setup Event Listeners
+// Setup Event Listeners - MOBILE UCHUN OPTIMIZATSIYA
 function setupEventListeners() {
+    console.log('Setting up event listeners...');
+    
     // Airdrop button
     const airdropButton = document.getElementById('airdropButton');
     let clickCount = 0;
     let animationCount = 0;
     let particleCount = 0;
     
+    if (!airdropButton) {
+        console.error('Airdrop button not found!');
+        return;
+    }
+    
+    // Click event - both mouse and touch
     airdropButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        console.log('Airdrop button clicked');
         
         // Increment counters
         clickCount++;
@@ -304,36 +247,93 @@ function setupEventListeners() {
         }, 300);
     });
     
-    // Hover effects
-    airdropButton.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-2px) scale(1.02)';
-        const glow = this.querySelector('.airdrop-glow');
-        if (glow) glow.style.opacity = '0.8';
-    });
-    
-    airdropButton.addEventListener('mouseleave', function() {
-        if (!this.classList.contains('active')) {
+    // Touch events for mobile
+    if (isTouchDevice()) {
+        airdropButton.addEventListener('touchstart', function(e) {
+            console.log('Airdrop touch start');
+            this.style.transform = 'scale(0.95)';
+            this.style.opacity = '0.8';
+            e.preventDefault();
+        }, { passive: false });
+        
+        airdropButton.addEventListener('touchend', function(e) {
+            console.log('Airdrop touch end');
             this.style.transform = '';
+            this.style.opacity = '';
+            // Click eventni chaqiramiz
+            const clickEvent = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true,
+                clientX: e.changedTouches[0].clientX,
+                clientY: e.changedTouches[0].clientY
+            });
+            this.dispatchEvent(clickEvent);
+        });
+    }
+    
+    // Hover effects - only for desktop
+    if (!isTouchDevice()) {
+        airdropButton.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.02)';
             const glow = this.querySelector('.airdrop-glow');
-            if (glow) glow.style.opacity = '0';
-        }
-    });
+            if (glow) glow.style.opacity = '0.8';
+        });
+        
+        airdropButton.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = '';
+                const glow = this.querySelector('.airdrop-glow');
+                if (glow) glow.style.opacity = '0';
+            }
+        });
+    }
     
     // Menu button
     const menuButton = document.getElementById('menuButton');
-    menuButton.addEventListener('click', function() {
-        showNotification('Menu opened - More options coming soon!');
-        this.classList.add('airdrop-click');
-        setTimeout(() => {
-            this.classList.remove('airdrop-click');
-        }, 300);
-    });
+    if (menuButton) {
+        menuButton.addEventListener('click', function() {
+            showNotification('Menu opened - More options coming soon!');
+            this.classList.add('airdrop-click');
+            setTimeout(() => {
+                this.classList.remove('airdrop-click');
+            }, 300);
+        });
+        
+        // Touch events for menu button
+        if (isTouchDevice()) {
+            menuButton.addEventListener('touchstart', function(e) {
+                this.style.transform = 'scale(0.95)';
+                this.style.opacity = '0.8';
+                e.preventDefault();
+            }, { passive: false });
+            
+            menuButton.addEventListener('touchend', function(e) {
+                this.style.transform = '';
+                this.style.opacity = '';
+                // Click eventni chaqiramiz
+                const clickEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: e.changedTouches[0].clientX,
+                    clientY: e.changedTouches[0].clientY
+                });
+                this.dispatchEvent(clickEvent);
+            });
+        }
+    }
     
     // Navigation items - faqat bosiladigan itemlar
     const navItems = document.querySelectorAll('.nav-item:not(.device-info)');
+    console.log('Found navigation items:', navItems.length);
+    
     navItems.forEach(item => {
+        // Click event
         item.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('Navigation item clicked:', this.querySelector('.nav-label').textContent);
             
             // Remove active class from all items
             navItems.forEach(nav => nav.classList.remove('active'));
@@ -348,6 +348,29 @@ function setupEventListeners() {
             // Update page content based on navigation
             updateContent(label);
         });
+        
+        // Touch events for navigation
+        if (isTouchDevice()) {
+            item.addEventListener('touchstart', function(e) {
+                this.style.opacity = '0.8';
+                this.style.transform = 'scale(0.97)';
+                e.preventDefault();
+            }, { passive: false });
+            
+            item.addEventListener('touchend', function(e) {
+                this.style.opacity = '';
+                this.style.transform = '';
+                // Click eventni chaqiramiz
+                const clickEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: e.changedTouches[0].clientX,
+                    clientY: e.changedTouches[0].clientY
+                });
+                this.dispatchEvent(clickEvent);
+            });
+        }
     });
     
     // Device info elementiga click event qo'shmaslik
@@ -356,19 +379,14 @@ function setupEventListeners() {
         deviceInfo.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            // Hech narsa qilmaymiz, chunki bu element bosilmaydi
         });
+        
+        // Touch event ham bloklash
+        deviceInfo.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }, { passive: false });
     }
-    
-    // Add touch events for mobile
-    airdropButton.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        this.style.transform = 'scale(0.95)';
-    }, { passive: false });
-    
-    airdropButton.addEventListener('touchend', function() {
-        this.style.transform = '';
-    });
     
     // Resize event
     window.addEventListener('resize', handleResize);
@@ -415,52 +433,64 @@ function initAnimations() {
         star.style.animationDelay = `${randomDelay}s`;
     });
     
-    // Add floating animation to airdrop button
-    const airdropButton = document.getElementById('airdropButton');
-    let floatDirection = 1;
-    
-    setInterval(() => {
-        if (!airdropButton.classList.contains('active') && 
-            !airdropButton.classList.contains('airdrop-click')) {
-            
-            const currentTransform = airdropButton.style.transform || '';
-            const currentY = currentTransform.includes('translateY') ? 
-                parseFloat(currentTransform.match(/translateY\(([^)]+)\)/)?.[1] || 0) : 0;
-            
-            const newY = currentY + (0.2 * floatDirection);
-            airdropButton.style.transform = `translateY(${newY}px)`;
-            
-            if (Math.abs(newY) >= 2) {
-                floatDirection *= -1;
-            }
+    // Add floating animation to airdrop button - faqat desktop uchun
+    if (!isTouchDevice()) {
+        const airdropButton = document.getElementById('airdropButton');
+        let floatDirection = 1;
+        
+        if (airdropButton) {
+            setInterval(() => {
+                if (!airdropButton.classList.contains('active') && 
+                    !airdropButton.classList.contains('airdrop-click')) {
+                    
+                    const currentTransform = airdropButton.style.transform || '';
+                    const currentY = currentTransform.includes('translateY') ? 
+                        parseFloat(currentTransform.match(/translateY\(([^)]+)\)/)?.[1] || 0) : 0;
+                    
+                    const newY = currentY + (0.2 * floatDirection);
+                    airdropButton.style.transform = `translateY(${newY}px)`;
+                    
+                    if (Math.abs(newY) >= 2) {
+                        floatDirection *= -1;
+                    }
+                }
+            }, 50);
         }
-    }, 50);
+    }
     
     // Add subtle pulse to menu button
     const menuButton = document.getElementById('menuButton');
-    setInterval(() => {
-        if (!menuButton.classList.contains('airdrop-click')) {
-            menuButton.style.boxShadow = '0 0 10px rgba(135, 116, 225, 0.3)';
-            setTimeout(() => {
-                menuButton.style.boxShadow = '';
-            }, 1000);
-        }
-    }, 5000);
+    if (menuButton) {
+        setInterval(() => {
+            if (!menuButton.classList.contains('airdrop-click')) {
+                menuButton.style.boxShadow = '0 0 10px rgba(135, 116, 225, 0.3)';
+                setTimeout(() => {
+                    menuButton.style.boxShadow = '';
+                }, 1000);
+            }
+        }, 5000);
+    }
 }
 
 // Setup Stats
 function setupStats() {
     // Initialize counters
-    document.getElementById('clickCount').textContent = '0';
-    document.getElementById('animationCount').textContent = '0';
-    document.getElementById('particleCount').textContent = '0';
+    const clickCountEl = document.getElementById('clickCount');
+    const animationCountEl = document.getElementById('animationCount');
+    const particleCountEl = document.getElementById('particleCount');
+    
+    if (clickCountEl) clickCountEl.textContent = '0';
+    if (animationCountEl) animationCountEl.textContent = '0';
+    if (particleCountEl) particleCountEl.textContent = '0';
     
     // Add auto-increment for demo
     setInterval(() => {
         const animationCount = document.getElementById('animationCount');
-        const current = parseInt(animationCount.textContent);
-        if (current < 100) {
-            animationCount.textContent = current + 1;
+        if (animationCount) {
+            const current = parseInt(animationCount.textContent);
+            if (current < 100) {
+                animationCount.textContent = current + 1;
+            }
         }
     }, 10000);
 }
@@ -491,6 +521,8 @@ function animateStars() {
 
 // Create Particle Animation
 function createParticleAnimation(element) {
+    if (!element) return 0;
+    
     const rect = element.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -578,6 +610,8 @@ function createParticle(x, y, color) {
 // Create Welcome Particles
 function createWelcomeParticles() {
     const airdropButton = document.getElementById('airdropButton');
+    if (!airdropButton) return;
+    
     const rect = airdropButton.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -686,6 +720,7 @@ function showNotification(message) {
 // Update Content based on Navigation
 function updateContent(section) {
     const contentWrapper = document.querySelector('.content-wrapper');
+    if (!contentWrapper) return;
     
     // Simple content update based on section
     switch(section.toLowerCase()) {
