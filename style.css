@@ -128,14 +128,25 @@ body {
     gap: 10px;
 }
 
+/* ============ LEFT SECTION (Logo va InfoBox) ============ */
+.left-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    min-width: 0;
+}
+
 .logo-container {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     height: 48px;
-    width: 140px;
+    width: 120px;
+    min-width: 120px;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 .logo-image {
@@ -153,7 +164,7 @@ body {
 /* ============ INFOBOX STYLES ============ */
 .info-box-container {
     flex-shrink: 0;
-    min-width: 120px;
+    min-width: 130px;
 }
 
 .info-box-container.left-side {
@@ -236,12 +247,16 @@ body {
     position: relative;
     overflow: hidden;
     z-index: 2;
-    min-width: 130px;
+    min-width: 140px;
     cursor: pointer;
     transition: all 0.3s ease;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
 }
 
 .airdrop-button:hover {
@@ -326,36 +341,12 @@ body {
     opacity: 0.6;
 }
 
-/* ============ CENTER LOGO ============ */
-.logo-center {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.logo-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-}
-
-.logo-placeholder i {
-    font-size: 24px;
-    color: #8774e1;
-}
-
-.logo-text {
-    font-size: 12px;
-    font-weight: 600;
-    color: #8a8d94;
-}
-
 /* ============ RIGHT SPACE ============ */
 .right-space {
     min-width: 40px;
     display: flex;
     justify-content: flex-end;
+    flex-shrink: 0;
 }
 
 .menu-button {
@@ -597,6 +588,86 @@ body {
     color: #8a8d94;
 }
 
+/* ============ TOUCH OPTIMIZATION ============ */
+/* Touch uchun active holatlar */
+.touch-active {
+    opacity: 0.8;
+    transform: scale(0.98) !important;
+}
+
+/* Touch uchun button hover effektlari */
+@media (hover: none) and (pointer: coarse) {
+    .airdrop-button:hover,
+    .menu-button:hover,
+    .nav-item:hover {
+        transform: none !important;
+        background: inherit !important;
+    }
+    
+    .airdrop-button:active,
+    .menu-button:active,
+    .nav-item:active {
+        opacity: 0.8;
+        transform: scale(0.98) !important;
+    }
+}
+
+/* Mobile touch uchun */
+@media (pointer: coarse) {
+    .airdrop-button,
+    .menu-button,
+    .nav-item {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        tap-highlight-color: transparent;
+    }
+    
+    .airdrop-button:active,
+    .menu-button:active,
+    .nav-item:active {
+        opacity: 0.9;
+        transform: scale(0.97);
+    }
+}
+
+/* IOS uchun hover fix */
+.airdrop-button,
+.menu-button,
+.nav-item {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Buttonlar uchun touch o'lchami */
+@media (max-width: 768px) {
+    .airdrop-button {
+        min-width: 140px !important;
+        min-height: 44px !important;
+        padding: 8px 12px !important;
+    }
+    
+    .menu-button {
+        width: 44px !important;
+        height: 44px !important;
+    }
+    
+    .nav-item {
+        min-width: 60px !important;
+        min-height: 60px !important;
+        padding: 12px !important;
+    }
+}
+
+/* Navigation itemlar touch o'lchami */
+.nav-item {
+    min-height: 60px;
+    min-width: 70px;
+}
+
 /* ============ DEVICE INFO STYLES ============ */
 .device-info {
     cursor: default !important;
@@ -799,9 +870,26 @@ body {
         padding: 0 12px;
     }
     
+    .header-content {
+        gap: 8px;
+    }
+    
+    .left-section {
+        gap: 8px;
+    }
+    
+    .logo-container {
+        width: 100px;
+        min-width: 100px;
+    }
+    
+    .logo-image {
+        width: 80px;
+    }
+    
     .airdrop-button {
-        min-width: 110px;
-        padding: 8px 12px;
+        min-width: 120px;
+        padding: 6px 10px;
     }
     
     .animation-grid {
@@ -831,15 +919,20 @@ body {
     }
 }
 
-/* Extra small screens */
+/* Small screens */
 @media screen and (max-width: 374px) {
-    .info-box-container {
-        min-width: 100px;
+    .logo-container {
+        width: 90px;
+        min-width: 90px;
+    }
+    
+    .logo-image {
+        width: 70px;
     }
     
     .airdrop-button {
-        min-width: 100px;
-        padding: 6px 10px;
+        min-width: 110px;
+        padding: 5px 8px;
     }
     
     .airdrop-icon {
@@ -856,22 +949,36 @@ body {
     }
     
     .nav-item {
-        padding: 10px 12px;
+        padding: 8px 12px;
     }
     
     .footer-nav {
         padding: 0 5px;
     }
+    
+    .airdrop-highlight {
+        font-size: 9px;
+    }
 }
 
-/* Smallest screens */
+/* Extra small screens */
 @media screen and (max-width: 320px) {
+    .logo-container {
+        width: 80px;
+        min-width: 80px;
+    }
+    
+    .logo-image {
+        width: 60px;
+    }
+    
     .airdrop-button {
-        min-width: 90px;
+        min-width: 100px;
+        padding: 4px 6px;
     }
     
     .airdrop-title {
-        font-size: 9px;
+        font-size: 8px;
     }
     
     .menu-button {
@@ -880,11 +987,15 @@ body {
     }
     
     .nav-item {
-        padding: 8px 10px;
+        padding: 6px 10px;
     }
     
     .nav-label {
         font-size: 10px;
+    }
+    
+    .left-section {
+        gap: 5px;
     }
 }
 
@@ -918,9 +1029,15 @@ body {
         padding: 12px;
     }
     
+    .logo-container {
+        height: 40px;
+        width: 100px;
+    }
+    
     .airdrop-button {
-        min-width: 100px;
+        min-width: 110px;
         padding: 6px 10px;
+        min-height: 36px;
     }
     
     .page-title {
@@ -954,4 +1071,37 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+/* Allow text selection only in content areas */
+.content-wrapper,
+.page-description,
+.instructions,
+.demo-section p {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* ============ TOUCH SCROLL FIX ============ */
+/* iOS uchun momentum scroll */
+.main-content {
+    -webkit-overflow-scrolling: touch !important;
+    overflow-y: scroll !important;
+}
+
+/* Touch uchun scroll fix */
+@media (hover: none) and (pointer: coarse) {
+    body {
+        overflow: hidden !important;
+    }
+    
+    .mobile-frame {
+        touch-action: pan-y !important;
+    }
+    
+    .main-content {
+        touch-action: pan-y !important;
+    }
 }
