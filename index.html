@@ -24,62 +24,59 @@
         <!-- Glass Header -->
         <header class="glass-header">
             <div class="header-content">
-                <!-- Chap tomonda animatsiyali InfoBox va Logo -->
-                <div class="left-section">
-                    <!-- Logo Container chap tomonda -->
-                    <div class="logo-container">
-                        <!-- Logo SVG background -->
-                        <img src="logo.svg" alt="1 Games Logo" class="trapezia-logo">
-                        
-                        <!-- PNG logo text -->
-                        <div class="logo-image" style="background-image: url('images/logo.png');"></div>
-                    </div>
-                    
-                    <!-- InfoBox Container -->
-                    <div class="info-box-container left-side">
-                        <div class="info-airdrop-col info-airdrop-row">
-                            <!-- Animation wrapper -->
-                            <div class="animation-wrapper">
-                                <svg width="69" height="28" viewBox="0 0 69 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g opacity="0.5" style="mix-blend-mode: soft-light;">
-                                        <path d="M34.5 0H68.5L34.5 28H0.5L34.5 0Z" fill="white"></path>
-                                    </g>
-                                </svg>
-                            </div>
+                <!-- Chap tomonda animatsiyali InfoBox -->
+                <div class="info-box-container left-side">
+                    <div class="info-airdrop-col info-airdrop-row">
+                        <!-- Animation wrapper -->
+                        <div class="animation-wrapper">
+                            <svg width="69" height="28" viewBox="0 0 69 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g opacity="0.5" style="mix-blend-mode: soft-light;">
+                                    <path d="M34.5 0H68.5L34.5 28H0.5L34.5 0Z" fill="white"></path>
+                                </g>
+                            </svg>
+                        </div>
 
-                            <!-- Star icons -->
-                            <div class="star-icons">
-                                <div class="star-icon">
-                                    <img src="assets/star.svg" alt="star" width="26" height="26">
-                                </div>
-                                <div class="star-icon">
-                                    <img src="assets/star.svg" alt="star" width="26" height="26">
-                                </div>
-                                <div class="star-icon">
-                                    <img src="assets/star.svg" alt="star" width="26" height="26">
-                                </div>
+                        <!-- Star icons -->
+                        <div class="star-icons">
+                            <div class="star-icon">
+                                <img src="assets/star.svg" alt="star" width="26" height="26">
                             </div>
-                            
-                            <!-- Airdrop button -->
-                            <div class="airdrop-button" id="airdropButton">
-                                <div class="airdrop-col">
-                                    <div class="airdrop-row">
-                                        <!-- SVG icon -->
-                                        <img src="assets/airdrop-icon.svg" alt="airdrop" width="20" height="20" class="airdrop-icon">
-                                        <span class="airdrop-text-wrapper row-layout">
-                                            <div class="airdrop-title">
-                                                <span class="airdrop-highlight" id="telegramUserName">
-                                                    USER
-                                                </span>
-                                            </div>
-                                        </span>
-                                    </div>
-                                </div>
-                                <!-- Glow effect -->
-                                <div class="airdrop-glow"></div>
+                            <div class="star-icon">
+                                <img src="assets/star.svg" alt="star" width="26" height="26">
+                            </div>
+                            <div class="star-icon">
+                                <img src="assets/star.svg" alt="star" width="26" height="26">
                             </div>
                         </div>
+                        
+                        <!-- Airdrop button -->
+                        <div class="airdrop-button" id="airdropButton">
+                            <div class="airdrop-col">
+                                <div class="airdrop-row">
+                                    <!-- SVG icon -->
+                                    <img src="assets/airdrop-icon.svg" alt="airdrop" width="20" height="20" class="airdrop-icon">
+                                    <span class="airdrop-text-wrapper row-layout">
+                                        <div class="airdrop-title">
+                                            <span class="airdrop-highlight" id="telegramUserName">
+                                                USER
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                            <!-- Glow effect -->
+                            <div class="airdrop-glow"></div>
+                        </div>
                     </div>
+                </div>
+                
+                <!-- Markazda logo (bo'sh joy) -->
+                <div class="logo-container">
+                    <!-- Logo SVG background -->
+                    <img src="logo.svg" alt="1 Games Logo" class="trapezia-logo">
+                    
+                    <!-- PNG logo text -->
+                    <div class="logo-image" style="background-image: url('images/logo.png');"></div>
                 </div>
                 
                 <!-- O'ng tomonda bo'sh joy yoki boshqa element -->
@@ -194,46 +191,36 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="script.js"></script>
     <script>
-        // DOM ready bo'lganda
+        // DOM ready bo'lganda Telegram WebApp ni ishga tushirish
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM fully loaded and parsed');
-            
             // Qurilma turini aniqlash
             detectDeviceType();
             
+            // Scrollni oldini olish
+            preventPageScroll();
+            
             // Telegram WebApp ni ishga tushirish
             initTelegramWebApp();
-            
-            // Touch optimizatsiyasi
-            setupTouchOptimization();
         });
 
-        // Touch optimizatsiyasi
-        function setupTouchOptimization() {
-            // Touch delay'ni kamaytirish
-            if ('addEventListener' in document) {
-                document.addEventListener('DOMContentLoaded', function() {
-                    // iOS uchun touch delay fix
-                    if (window.navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-                        document.addEventListener('touchstart', function() {}, false);
-                    }
-                }, false);
-            }
+        // Sahifa scrollini oldini olish
+        function preventPageScroll() {
+            // Asosiy sahifa scrollini oldini olish
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100vh';
+            document.body.style.width = '100vw';
             
-            // Hover effektlarini touch uchun optimallashtirish
-            const hoverElements = document.querySelectorAll('.airdrop-button, .menu-button, .nav-item:not(.device-info)');
-            hoverElements.forEach(el => {
-                el.addEventListener('touchstart', function(e) {
-                    this.classList.add('touch-active');
-                });
-                
-                el.addEventListener('touchend', function() {
-                    this.classList.remove('touch-active');
-                });
-                
-                el.addEventListener('touchcancel', function() {
-                    this.classList.remove('touch-active');
-                });
+            // Touch move eventlarini bloklash
+            document.addEventListener('touchmove', function(e) {
+                // Faqat main-content ichida scroll qilishga ruxsat berish
+                if (!e.target.closest('.main-content')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // IOS uchun double tap to zoom ni oldini olish
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
             });
         }
     </script>
