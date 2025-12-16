@@ -2,10 +2,21 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>1 games - InfoBox Demo</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Mobile uchun viewport-fit stili */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: min(0vmin, env(safe-area-inset-left));
+                padding-right: min(0vmin, env(safe-area-inset-right));
+                padding-top: min(0vmin, env(safe-area-inset-top));
+                padding-bottom: min(0vmin, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Mobile Frame Container -->
@@ -182,12 +193,36 @@
     <script>
         // DOM ready bo'lganda Telegram WebApp ni ishga tushirish
         document.addEventListener('DOMContentLoaded', function() {
-            // Telegram WebApp ni ishga tushirish
-            initTelegramWebApp();
-            
             // Qurilma turini aniqlash
             detectDeviceType();
+            
+            // Scrollni oldini olish
+            preventPageScroll();
+            
+            // Telegram WebApp ni ishga tushirish
+            initTelegramWebApp();
         });
+
+        // Sahifa scrollini oldini olish
+        function preventPageScroll() {
+            // Asosiy sahifa scrollini oldini olish
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100vh';
+            document.body.style.width = '100vw';
+            
+            // Touch move eventlarini bloklash
+            document.addEventListener('touchmove', function(e) {
+                // Faqat main-content ichida scroll qilishga ruxsat berish
+                if (!e.target.closest('.main-content')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // IOS uchun double tap to zoom ni oldini olish
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+        }
     </script>
 </body>
 </html>
