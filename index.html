@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>1 games - InfoBox Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Mobile Frame Container -->
+    <div class="mobile-frame">
+        <!-- Glass Header -->
+        <header class="glass-header">
+            <div class="header-content">
+                <!-- Chap tomonda animatsiyali InfoBox -->
+                <div class="info-box-container left-side">
+                    <div class="info-airdrop-col info-airdrop-row">
+                        <!-- Animation wrapper -->
+                        <div class="animation-wrapper">
+                            <svg width="69" height="28" viewBox="0 0 69 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g opacity="0.5" style="mix-blend-mode: soft-light;">
+                                    <path d="M34.5 0H68.5L34.5 28H0.5L34.5 0Z" fill="white"></path>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Star icons -->
+                        <div class="star-icons">
+                            <div class="star-icon">
+                                <img src="assets/star.svg" alt="star" width="26" height="26">
+                            </div>
+                            <div class="star-icon">
+                                <img src="assets/star.svg" alt="star" width="26" height="26">
+                            </div>
+                            <div class="star-icon">
+                                <img src="assets/star.svg" alt="star" width="26" height="26">
+                            </div>
+                        </div>
+                        
+                        <!-- Airdrop button -->
+                        <div class="airdrop-button" id="airdropButton">
+                            <div class="airdrop-col">
+                                <div class="airdrop-row">
+                                    <!-- SVG icon -->
+                                    <img src="assets/airdrop-icon.svg" alt="airdrop" width="20" height="20" class="airdrop-icon">
+                                    <span class="airdrop-text-wrapper row-layout">
+                                        <div class="airdrop-title">
+                                            <span class="airdrop-highlight" id="telegramUserName">
+                                                USER
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                            <!-- Glow effect -->
+                            <div class="airdrop-glow"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Markazda logo (bo'sh joy) -->
+                <div class="logo-container">
+                    <!-- Logo SVG background -->
+                    <img src="logo.svg" alt="1 Games Logo" class="trapezia-logo">
+                    
+                    <!-- PNG logo text -->
+                    <div class="logo-image" style="background-image: url('images/logo.png');"></div>
+                </div>
+                
+                <!-- O'ng tomonda bo'sh joy yoki boshqa element -->
+                <div class="right-space">
+                    <button class="menu-button" id="menuButton">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1 class="page-title">InfoBox Demo</h1>
+                <p class="page-description">
+                    Bu demo sahifada chap tomonda animatsiyali InfoBox mavjud.
+                    Airdrop tugmasini bosing va interaktiv effektlarni ko'ring.
+                </p>
+                
+                <div class="demo-section">
+                    <h2><i class="fas fa-magic"></i> Animatsiyalar</h2>
+                    <div class="animation-grid">
+                        <div class="animation-card">
+                            <div class="anim-icon star-anim">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3>Yulduz Animatsiyasi</h3>
+                            <p>3 ta yulduz pulsatsiya animatsiyasi</p>
+                        </div>
+                        
+                        <div class="animation-card">
+                            <div class="anim-icon fly-anim">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3>Fly-through</h3>
+                            <p>O'tib ketuvchi chiziq animatsiyasi</p>
+                        </div>
+                        
+                        <div class="animation-card">
+                            <div class="anim-icon click-anim">
+                                <i class="fas fa-hand-pointer"></i>
+                            </div>
+                            <h3>Click Effekt</h3>
+                            <p>Tugmani bosganda partikellar</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="instructions">
+                    <h3><i class="fas fa-info-circle"></i> Qo'llanma</h3>
+                    <ul>
+                        <li><strong>USER AIRDROP</strong> tugmasini bosing - alert va animatsiyalar ishlaydi</li>
+                        <li>Tugmani ustiga sichqonchani olib boring - hover effekti</li>
+                        <li>Yulduzchilar doimiy ravishda pulsatsiya qiladi</li>
+                        <li>Responsive dizayn - barcha ekran o'lchamlarida moslashadi</li>
+                    </ul>
+                </div>
+                
+                <div class="stats-display">
+                    <h3><i class="fas fa-chart-line"></i> Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="clickCount">0</div>
+                            <div class="stat-label">Clicks</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="animationCount">0</div>
+                            <div class="stat-label">Animations</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="particleCount">0</div>
+                            <div class="stat-label">Particles</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="glass-footer">
+            <nav class="footer-nav">
+                <a href="#" class="nav-item" data-section="games">
+                    <div class="nav-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <span class="nav-label">Games</span>
+                </a>
+                
+                <a href="#" class="nav-item device-info" data-section="device">
+                    <div class="nav-icon device-icon">
+                        📱
+                    </div>
+                    <span class="nav-label">
+                        <span id="deviceText">Device</span>
+                    </span>
+                </a>
+                
+                <a href="#" class="nav-item" data-section="settings">
+                    <div class="nav-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <span class="nav-label">Settings</span>
+                </a>
+            </nav>
+        </footer>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // DOM ready bo'lganda Telegram WebApp ni ishga tushirish
+        document.addEventListener('DOMContentLoaded', function() {
+            // Telegram WebApp ni ishga tushirish
+            initTelegramWebApp();
+            
+            // Qurilma turini aniqlash
+            detectDeviceType();
+        });
+    </script>
+</body>
+</html>
